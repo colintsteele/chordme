@@ -1,4 +1,4 @@
-const octave = [
+export const octave = [
   "C",
   "Db",
   "D",
@@ -12,6 +12,7 @@ const octave = [
   "Bb",
   "B",
 ];
+export const twoOctaves = [...octave, ...octave];
 
 // export const twoOctave = {
 //   C: 48,
@@ -39,3 +40,31 @@ const octave = [
 //   Bb: 70,
 //   B: 57,
 // };
+
+export const chords = {
+  major: [0, 4, 7],
+  minor: [0, 3, 7],
+  major7: [0, 4, 7, 11],
+  minor7: [0, 3, 7, 10],
+};
+
+export function sample(list) {
+  var i = Math.floor(Math.random() * list.length);
+  return [list[i], i];
+}
+
+export function randomNote() {
+  var note = sample(octave);
+  return {
+    note: note[0],
+    index: note[1],
+  };
+}
+
+export function randomChord(root, scale, offset) {
+  var notes = chords[scale].map(function (i) {
+    return i + root["index"] + offset;
+  });
+
+  return { root: root, notes: notes };
+}

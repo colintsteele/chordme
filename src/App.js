@@ -3,21 +3,25 @@ import "./App.css";
 import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
 import "react-piano/dist/styles.css";
 import "./Theory";
+import { randomChord, randomNote } from "./Theory";
 
 function App() {
-  const firstNote = MidiNumbers.fromNote("c3"); //48
-  const lastNote = MidiNumbers.fromNote("b4"); //71
-  const notes = {};
+  const firstNote = MidiNumbers.fromNote("c0"); //48
+  const lastNote = MidiNumbers.fromNote("b1"); //71
   const keyboardShortcuts = KeyboardShortcuts.create({
     firstNote: firstNote,
     lastNote: lastNote,
     keyboardConfig: KeyboardShortcuts.HOME_ROW,
   });
-  //console.log(sample(twoOctave)); sample might work in es6
+
+  var note = randomNote();
+  var chord = randomChord(note, "major", 12);
+  console.log(chord["root"]["note"]);
+  console.log(chord["notes"]);
 
   return (
     <Piano
-      activeNotes={[48, 71]}
+      activeNotes={[...chord["notes"]]}
       noteRange={{ first: firstNote, last: lastNote }}
       playNote={(midiNumber) => {
         // Play a given note - see notes below
