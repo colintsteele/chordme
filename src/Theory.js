@@ -66,5 +66,7 @@ export function randomChord(root, scale, offset) {
     return i + root["index"] + offset;
   });
 
-  return { root: root, notes: notes };
+  var name = `${root.note} ${scale}`
+
+  return { root: root, notes: notes, name: name };
 }

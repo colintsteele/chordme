@@ -4,23 +4,24 @@ import Box from "@mui/material/Box";
 
 function Circle() {
   return (
-    <ImageList
-      variant="masonry"
-      sx={{ height: 300, overflowY: "scroll" }}
-      cols={4}
-      gap={0}
-      display="flex"
-    >
-      {itemData.map((item) => (
-        <ImageListItem key={item.img.toString()}>
-          <img
-            src={`${item.img}?fit=crop&auto=format`}
-            alt={item.title}
-            loading="lazy"
-          />
-        </ImageListItem>
-      ))}
-    </ImageList>
+    <Box>
+      <ImageList
+        variant="masonry"
+        sx={{ height: 300, overflowY: "scroll" }}
+        cols={4}
+        gap={0}
+      >
+        {itemData.map((item) => (
+          <ImageListItem key={item.img.toString()}>
+            <img
+              src={`${item.img}?fit=crop&auto=format`}
+              alt={item.title}
+              loading="lazy"
+            />
+          </ImageListItem>
+        ))}
+      </ImageList>
+    </Box>
   );
 }
 

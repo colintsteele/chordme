@@ -6,6 +6,7 @@ import Keyboard from "./Keyboard";
 import Circle from "./Circle";
 import reportWebVitals from "./reportWebVitals";
 import { randomChord, randomNote } from "./Theory";
+import Container from "@mui/material/Container"
 
 var note = randomNote();
 var chord = randomChord(note, "major", 12);
@@ -13,10 +14,10 @@ var chord = randomChord(note, "major", 12);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <div>
+    <Container>
       <Circle />
-      <Keyboard activeNotes={chord.notes} />
-    </div>
+      <Keyboard chord={chord} />
+    </Container>
   </React.StrictMode>
 );
 

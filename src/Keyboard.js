@@ -6,6 +6,7 @@ import { randomChord, randomNote } from "./Theory";
 import { Component } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import Container from "@mui/material/Container";
 
 class Keyboard extends Component {
@@ -13,32 +14,46 @@ class Keyboard extends Component {
     super(props);
 
     this.state = {
-      activeNotes: props.activeNotes,
+      chord: props.chord,
     };
   }
 
-  setKeys(keys) {
-    console.log("setKeys called");
-    console.log(this.state.activeNotes);
-    this.setState({ activeNotes: keys });
+  setKeys(chord) {
+    if (chord.name == this.state.chord.name) {
+      var note2 = randomNote();
+      var chord = randomChord(note2, "major", 12);
+    }
+    this.setState({ chord: chord });
   }
 
-  render() {
-    const firstNote = MidiNumbers.fromNote("c0"); //48
-    const lastNote = MidiNumbers.fromNote("b1"); //71
-    const keyboardShortcuts = KeyboardShortcuts.create({
+  piano() {
+    var firstNote = MidiNumbers.fromNote("c0"); //48
+    var lastNote = MidiNumbers.fromNote("b1"); //71
+    var keyboardShortcuts = KeyboardShortcuts.create({
       firstNote: firstNote,
       lastNote: lastNote,
       keyboardConfig: KeyboardShortcuts.HOME_ROW,
     });
 
-    var note = randomNote();
-    var chord = randomChord(note, "major", 12);
+    return (
+      <Piano
+        activeNotes={this.state.chord.notes}
+        noteRange={{ first: firstNote, last: lastNote }}
+        playNote={(midiNumber) => {
+          // Play a given note - see notes below
+        }}
+        stopNote={(midiNumber) => {
+          // Stop playing a given note - see notes below
+        }}
+        width={1000}
+        keyboardShortcuts={keyboardShortcuts}
+      />
+    );
+  }
 
+  render() {
     var note2 = randomNote();
     var chord2 = randomChord(note2, "major", 12);
-
-    console.log(`active notes ${this.state.activeNotes}`);
 
     return (
       <Container
@@ -47,22 +62,22 @@ class Keyboard extends Component {
         alignItems="center"
         minHeight="100vh"
       >
-        <Box>
-          <Piano
-            activeNotes={this.state.activeNotes}
-            noteRange={{ first: firstNote, last: lastNote }}
-            playNote={(midiNumber) => {
-              // Play a given note - see notes below
-            }}
-            stopNote={(midiNumber) => {
-              // Stop playing a given note - see notes below
-            }}
-            width={1000}
-            keyboardShortcuts={keyboardShortcuts}
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="2vh"
+        >
+          <Chip
+            fontWeight="bold"
+            fontWeight="20px"
+            size="large"
+            label={`${this.state.chord.name}`}
+            color="primary"
           />
         </Box>
+        <Box>{this.piano()}</Box>
         <Box
-          justifyContent="center"
           display="flex"
           justifyContent="center"
           alignItems="center"
@@ -71,7 +86,7 @@ class Keyboard extends Component {
           <Button
             variant="contained"
             onClick={() => {
-              this.setKeys(chord2.notes);
+              this.setKeys(chord2);
             }}
           >
             HI MOM
