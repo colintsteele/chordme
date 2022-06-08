@@ -1,16 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import Circle from './Circle';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import Keyboard from "./Keyboard";
+import Circle from "./Circle";
+import reportWebVitals from "./reportWebVitals";
+import Button from "@mui/material/Button";
+import { randomChord, randomNote } from "./Theory";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+var note = randomNote();
+var chord = randomChord(note, "major", 12);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <div>
-    <Circle />
-    <App />
+      <Circle />
+      <Keyboard activeNotes={chord.notes} />
     </div>
   </React.StrictMode>
 );
