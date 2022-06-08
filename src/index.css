@@ -16,3 +16,7 @@ code {
   margin: auto;
   margin-top: 45px;
 }
+
+.jankCenter {
+  justify-content: center;
+}

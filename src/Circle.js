@@ -34,6 +34,10 @@ const itemData = [
     img: "assets/c-major-c-minor.png",
     title: "minor/major",
   },
+  {
+    img: "assets/clef-on-sheet-music-3.070cb6a.jpg",
+    title: "all notes!",
+  },
 ];
 
 export default Circle;
