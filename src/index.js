@@ -5,7 +5,6 @@ import App from "./App";
 import Keyboard from "./Keyboard";
 import Circle from "./Circle";
 import reportWebVitals from "./reportWebVitals";
-import Button from "@mui/material/Button";
 import { randomChord, randomNote } from "./Theory";
 
 var note = randomNote();

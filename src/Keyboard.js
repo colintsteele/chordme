@@ -4,6 +4,9 @@ import "react-piano/dist/styles.css";
 import "./Theory";
 import { randomChord, randomNote } from "./Theory";
 import { Component } from "react";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 
 class Keyboard extends Component {
   constructor(props) {
@@ -16,6 +19,7 @@ class Keyboard extends Component {
 
   setKeys(keys) {
     console.log("setKeys called");
+    console.log(this.state.activeNotes);
     this.setState({ activeNotes: keys });
   }
 
@@ -37,29 +41,43 @@ class Keyboard extends Component {
     console.log(`active notes ${this.state.activeNotes}`);
 
     return (
-      <div>
-        <Piano
-          // activeNotes={this.props.activeNotes}
-          activeNotes={[...chord["notes"]]}
-          noteRange={{ first: firstNote, last: lastNote }}
-          playNote={(midiNumber) => {
-            // Play a given note - see notes below
-          }}
-          stopNote={(midiNumber) => {
-            // Stop playing a given note - see notes below
-          }}
-          width={1000}
-          keyboardShortcuts={keyboardShortcuts}
-        />
-        <button
-          onClick={() => {
-            // console.log(chord2.notes);
-            this.setKeys(chord2.notes);
-          }}
+      <Container
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
+        <Box>
+          <Piano
+            activeNotes={this.state.activeNotes}
+            noteRange={{ first: firstNote, last: lastNote }}
+            playNote={(midiNumber) => {
+              // Play a given note - see notes below
+            }}
+            stopNote={(midiNumber) => {
+              // Stop playing a given note - see notes below
+            }}
+            width={1000}
+            keyboardShortcuts={keyboardShortcuts}
+          />
+        </Box>
+        <Box
+          justifyContent="center"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="10vh"
         >
-          HI MOM
-        </button>
-      </div>
+          <Button
+            variant="contained"
+            onClick={() => {
+              this.setKeys(chord2.notes);
+            }}
+          >
+            HI MOM
+          </Button>
+        </Box>
+      </Container>
     );
   }
 }
