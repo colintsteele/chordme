@@ -91,6 +91,7 @@ class Keyboard extends Component {
   boxProps() {
     return {
       display: "flex",
+      p: 4,
       justify: "center",
       justifyContent: "center",
       alignItems: "center",
@@ -128,7 +129,6 @@ class Keyboard extends Component {
         <Box {...this.boxProps()}>
           <Button
             variant="contained"
-            gap={2}
             onClick={() => {
               this.setKeys(chord2);
             }}

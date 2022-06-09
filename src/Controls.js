@@ -14,25 +14,34 @@ class Controls extends Component {
 
   render() {
     return (
-      <Box>
-        <FormGroup>
-          <FormControlLabel
-            className={"jankCenter"}
-            control={
-              <Switch
-                name="major"
-                defaultChecked
-                onChange={this.majorSwitchHandler}
-              />
-            }
-            label="Major scale"
-          />
-          <FormControlLabel
-            className={"jankCenter"}
-            control={<Switch name="minor" onChange={this.minorSwitchHandler} />}
-            label="Minor scale"
-          />
-        </FormGroup>
+      <Box display="flex" justifyContent="center">
+        <Box>
+          <FormGroup>
+            <FormControlLabel
+              className={"jankCenter"}
+              control={
+                <Switch
+                  name="major"
+                  defaultChecked
+                  onChange={this.majorSwitchHandler}
+                />
+              }
+              label="Major scale"
+            />
+            <FormControlLabel
+              className={"jankCenter"}
+              control={
+                <Switch name="minor" onChange={this.minorSwitchHandler} />
+              }
+              label="Minor scale"
+            />
+          </FormGroup>
+        </Box>
+        <Box>
+          <FormGroup>
+            <FormControlLabel control={<Switch />} />
+          </FormGroup>
+        </Box>
       </Box>
     );
   }
