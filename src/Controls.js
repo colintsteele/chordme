@@ -7,7 +7,6 @@ import { Component } from "react";
 class Controls extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
 
     this.minorSwitchHandler = props.minorSwitchHandler;
     this.majorSwitchHandler = props.majorSwitchHandler;
@@ -20,13 +19,17 @@ class Controls extends Component {
           <FormControlLabel
             className={"jankCenter"}
             control={
-              <Switch defaultChecked onChange={this.majorSwitchHandler} />
+              <Switch
+                name="major"
+                defaultChecked
+                onChange={this.majorSwitchHandler}
+              />
             }
             label="Major scale"
           />
           <FormControlLabel
             className={"jankCenter"}
-            control={<Switch onChange={this.minorSwitchHandler} />}
+            control={<Switch name="minor" onChange={this.minorSwitchHandler} />}
             label="Minor scale"
           />
         </FormGroup>
