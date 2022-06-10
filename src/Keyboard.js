@@ -19,10 +19,12 @@ class Keyboard extends Component {
     this.state = {
       chord: props.chord,
       nextChord: props.nextChord,
+      activeNotes: props.chord.notes,
       minorScaleEnabled: props.minorScaleEnabled,
       majorScaleEnabled: props.majorScaleEnabled,
       scalesEnabled: ["major"],
       soundOn: false,
+      quizTime: 3,
     };
   }
 
@@ -31,7 +33,6 @@ class Keyboard extends Component {
   };
 
   switchHandler = (event, onOff) => {
-    console.log(event.target.name);
     var newScalesEnabled = this.state.scalesEnabled;
 
     if (onOff) {
@@ -49,20 +50,30 @@ class Keyboard extends Component {
     }
   };
 
+  changeChord(chord) {
+    this.setKeys(this.state.nextChord);
+    this.setActiveNotes([]);
+    console.log("empty notes");
+    setTimeout(() => {
+      this.setActiveNotes(chord);
+      console.log("some notes");
+    }, this.state.quizTime * 1_000);
+  }
+
   setKeys(chord) {
     var note = randomNote();
     var newChord = randomChord(note, sample(this.state.scalesEnabled)[0], 12);
 
     if (newChord.name === chord) {
       var newNote = randomNote();
-      var newChord = randomChord(
-        newNote,
-        sample(this.state.scalesEnabled)[0],
-        12
-      );
+      newChord = randomChord(newNote, sample(this.state.scalesEnabled)[0], 12);
     }
 
     this.setState({ chord: chord, nextChord: newChord });
+  }
+
+  setActiveNotes(chord) {
+    this.setState({ activeNotes: chord.notes });
   }
 
   piano() {
@@ -76,11 +87,10 @@ class Keyboard extends Component {
 
     return (
       <Piano
-        activeNotes={this.state.chord.notes}
+        // activeNotes={this.state.chord.notes}
+        activeNotes={this.state.activeNotes}
         noteRange={{ first: firstNote, last: lastNote }}
         playNote={(midiNumber) => {
-          console.log(midiToNote(midiNumber));
-          console.log(this.state.chord);
           if (!this.state.soundOn) {
             return null;
           }
@@ -127,6 +137,7 @@ class Keyboard extends Component {
           <Box p={1}>
             <Chip
               p={2}
+              size="medium"
               {...this.chipProps()}
               label={`${this.state.chord.name}`}
             />
@@ -134,6 +145,7 @@ class Keyboard extends Component {
           <Box p={1}>
             <Chip
               p={2}
+              size="small"
               {...this.chipProps()}
               disabled
               label={`${this.state.nextChord.name}`}
@@ -159,7 +171,8 @@ class Keyboard extends Component {
           <Button
             variant="contained"
             onClick={() => {
-              this.setKeys(this.state.nextChord);
+              // this.setKeys(this.state.nextChord);
+              this.changeChord(this.state.nextChord);
             }}
           >
             Chord me!
