@@ -12,6 +12,12 @@ export const octave = [
   "Bb",
   "B",
 ];
+
+export const scales = {
+  major: [0, 2, 4, 5, 7, 9, 11],
+  minor: [0, 2, 3, 5, 6, 7, 9],
+};
+
 export const twoOctaves = [...octave, ...octave];
 
 export const chords = {

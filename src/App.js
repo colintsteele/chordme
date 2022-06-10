@@ -1,5 +1,5 @@
 import "./App.css";
-import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
+import { Piano, MidiNumbers } from "react-piano";
 import "react-piano/dist/styles.css";
 import "./Theory";
 import { randomChord, randomNote } from "./Theory";
@@ -12,11 +12,6 @@ class App extends React.Component {
     var lastNote = MidiNumbers.fromNote("b1"); //71
     var note = randomNote();
     var chord = randomChord(note, "major", 12);
-    var keyboardShortcuts = KeyboardShortcuts.create({
-      firstNote: firstNote,
-      lastNote: lastNote,
-      keyboardConfig: KeyboardShortcuts.HOME_ROW,
-    });
 
     this.state = {
       activeNotes: [...chord["notes"]],

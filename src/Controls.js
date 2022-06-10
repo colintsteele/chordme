@@ -14,7 +14,7 @@ class Controls extends Component {
 
   render() {
     return (
-      <Box display="flex" justifyContent="center">
+      <Box p={1} display="flex" justifyContent="center">
         <Box>
           <FormGroup>
             <FormControlLabel

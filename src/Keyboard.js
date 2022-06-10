@@ -113,7 +113,7 @@ class Keyboard extends Component {
 
     return (
       <Container display="flex">
-        <Box display="flex" justifyContent="center">
+        <Box p={1} display="flex" justifyContent="center">
           <Chip {...this.chipProps()} label={`${this.state.chord.name}`} />
         </Box>
         <Box {...this.boxProps}>
@@ -123,8 +123,11 @@ class Keyboard extends Component {
           />
         </Box>
         <Box sx={{ display: "inline-flex" }}>
-          {this.piano()} <Switch onChange={this.powerButtonHandler} />
-          {"Sound On"}
+          <Box>{this.piano()}</Box>
+          <Box display="inline-flex" alignItems="center">
+            <Switch onChange={this.powerButtonHandler} color="error" />
+            {"Sound On"}
+          </Box>
         </Box>
         <Box {...this.boxProps()}>
           <Button
@@ -142,3 +145,5 @@ class Keyboard extends Component {
 }
 
 export default Keyboard;
+
+
