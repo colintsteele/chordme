@@ -7,15 +7,23 @@ import reportWebVitals from "./reportWebVitals";
 import { randomChord, randomNote } from "./Theory";
 import Container from "@mui/material/Container";
 
-var note = randomNote();
-var chord = randomChord(note, "major", 12);
+const firstChords = () => {
+  var firstChord = randomChord(randomNote(), "major", 12);
+  var secondChord = randomChord(randomNote(), "major", 12);
+
+  while (firstChord.name === secondChord.name) {
+    secondChord = randomChord(randomNote(), "major", 12);
+  }
+
+  return [firstChord, secondChord];
+};
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Container>
       <Circle />
-      <Keyboard chord={chord} />
+      <Keyboard chord={firstChords()[0]} nextChord={firstChords()[1]} />
     </Container>
   </React.StrictMode>
 );
