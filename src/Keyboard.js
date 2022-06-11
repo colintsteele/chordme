@@ -11,6 +11,8 @@ import Chip from "@mui/material/Chip";
 import Container from "@mui/material/Container";
 import Soundfont from "soundfont-player";
 import Switch from "@mui/material/Switch";
+import audio from "./Ding-sound-effect.mp3";
+import MidiController from "./MidiController";
 
 class Keyboard extends Component {
   constructor(props) {
@@ -24,15 +26,28 @@ class Keyboard extends Component {
       majorScaleEnabled: props.majorScaleEnabled,
       scalesEnabled: ["major"],
       soundOn: false,
-      quizTime: 3,
+      quizMode: true,
+      quizTime: 2,
+      // pressedKeys: [],
+      correctChord: false,
     };
+
+    const midiController = new MidiController();
   }
+
+  pressedKeysvar = [];
 
   powerButtonHandler = (_event, onOff) => {
     this.setState({ soundOn: onOff });
   };
 
-  switchHandler = (event, onOff) => {
+  removeElement = (array, element) => {
+    return array.filter(function (item) {
+      return item !== element;
+    });
+  };
+
+  scaleSwitchHandler = (event, onOff) => {
     var newScalesEnabled = this.state.scalesEnabled;
 
     if (onOff) {
@@ -50,14 +65,47 @@ class Keyboard extends Component {
     }
   };
 
+  quizSwitchHandler = (_event, onOff) => {
+    this.setState({ quizMode: onOff });
+  };
+
   changeChord(chord) {
+    this.setState({ correctChord: false });
     this.setKeys(this.state.nextChord);
     this.setActiveNotes([]);
-    console.log("empty notes");
-    setTimeout(() => {
+    if (this.state.quizMode) {
+      this.setState({ activeNotes: [] });
+      console.log("quiz!");
+    } else {
       this.setActiveNotes(chord);
-      console.log("some notes");
-    }, this.state.quizTime * 1_000);
+    }
+  }
+
+  checkMatchingChord() {
+    var pk = this.pressedKeysvar;
+    var chordNumbers = this.state.chord.notes;
+    var chordNotes = chordNumbers.map((n) => {
+      return midiToNote(n);
+    });
+
+    if (JSON.stringify(pk) === JSON.stringify(chordNotes)) {
+      this.setState({ correctChord: true });
+      new Audio(audio).play();
+
+      setTimeout(() => {
+        this.setState({ correctChord: false });
+        this.changeChord(this.state.nextChord);
+      }, this.state.quizTime * 1_000);
+    }
+  }
+
+  press(note, onOff) {
+    if (onOff) {
+      this.pressedKeysvar = [...this.pressedKeysvar, note];
+      this.checkMatchingChord();
+    } else {
+      this.pressedKeysvar = this.removeElement(this.pressedKeysvar, note);
+    }
   }
 
   setKeys(chord) {
@@ -87,10 +135,11 @@ class Keyboard extends Component {
 
     return (
       <Piano
-        // activeNotes={this.state.chord.notes}
         activeNotes={this.state.activeNotes}
         noteRange={{ first: firstNote, last: lastNote }}
         playNote={(midiNumber) => {
+          this.press(midiToNote(midiNumber), true);
+
           if (!this.state.soundOn) {
             return null;
           }
@@ -101,7 +150,7 @@ class Keyboard extends Component {
           );
         }}
         stopNote={(midiNumber) => {
-          // Stop playing a given note - see notes below
+          this.press(midiToNote(midiNumber), false);
         }}
         width={1000}
         keyboardShortcuts={keyboardShortcuts}
@@ -139,6 +188,7 @@ class Keyboard extends Component {
               p={2}
               size="medium"
               {...this.chipProps()}
+              color={this.state.correctChord ? "success" : "primary"}
               label={`${this.state.chord.name}`}
             />
           </Box>
@@ -155,8 +205,9 @@ class Keyboard extends Component {
         {/* Controls */}
         <Box {...this.boxProps}>
           <Controls
-            minorSwitchHandler={this.switchHandler}
-            majorSwitchHandler={this.switchHandler}
+            minorSwitchHandler={this.scaleSwitchHandler}
+            majorSwitchHandler={this.scaleSwitchHandler}
+            quizSwitchHandler={this.quizSwitchHandler}
           />
         </Box>
         {/* Keyboard */}

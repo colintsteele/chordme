@@ -10,6 +10,7 @@ class Controls extends Component {
 
     this.minorSwitchHandler = props.minorSwitchHandler;
     this.majorSwitchHandler = props.majorSwitchHandler;
+    this.quizSwitchHandler = props.quizSwitchHandler;
   }
 
   render() {
@@ -39,7 +40,11 @@ class Controls extends Component {
         </Box>
         <Box>
           <FormGroup>
-            <FormControlLabel control={<Switch />} />
+            <FormControlLabel
+              label="Quiz Mode"
+              onChange={this.quizSwitchHandler}
+              control={<Switch defaultChecked />}
+            />
           </FormGroup>
         </Box>
       </Box>
