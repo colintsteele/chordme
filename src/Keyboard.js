@@ -42,15 +42,16 @@ class Keyboard extends Component {
 
   // Handlers
 
-  midiMessageHandler = (event) => {
-    var [pressOn, midiNumber, _something] = [...event.data];
-    // console.log(pressOn);
-    // console.log(midiNumber);
-    // console.log(midiToNote(midiNumber));
-    // console.log(this.state);
+  midiMessageHandler = (event, onOff, midiNote, velocity) => {
+    console.log(`onOff: ${onOff}`);
+    console.log(`midiNote: ${midiNote}`);
+    console.log(`velocity: ${velocity}`);
+    console.log("<--->");
 
-    console.log(midiNumber);
-    if (pressOn == 144) {
+    var [pressOn, midiNumber, _something] = [...event.data];
+
+    // if (pressOn == 144) {
+    if (onOff) {
       this.addActiveNote(midiNumber - 36);
     } else {
       this.removeActiveNote(midiNumber - 36);
@@ -92,7 +93,6 @@ class Keyboard extends Component {
 
     if (this.state.quizMode) {
       this.setState({ activeNotes: [] });
-      console.log("quiz!");
     } else {
       this.setActiveNotes(chord);
     }
@@ -107,8 +107,6 @@ class Keyboard extends Component {
       return midiToNote(n).slice(0, -1);
     });
 
-    console.log(pk);
-    console.log(chordNotes);
     if (JSON.stringify(pk.sort()) === JSON.stringify(chordNotes.sort())) {
       this.setState({ correctChord: true });
       new Audio(audio).play();
@@ -179,7 +177,6 @@ class Keyboard extends Component {
         activeNotes={this.state.activeNotes}
         noteRange={{ first: firstNote, last: lastNote }}
         playNote={(midiNumber) => {
-          console.log(midiNumber);
           this.press(midiToNote(midiNumber), true);
 
           if (!this.state.soundOn) {

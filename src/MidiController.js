@@ -1,13 +1,31 @@
 class MidiController {
   constructor(midiMessageHandler) {
+    const deviceValues = {
+      default: { on: 1 },
+      "OP-1 Midi Device": { on: 144 },
+    };
+
     if (navigator.requestMIDIAccess) {
-      //   navigator.requestMIDIAccess().then(this.success, this.failure);
       navigator.requestMIDIAccess().then(
         (midiAccess) => {
           var inputs = midiAccess.inputs;
 
           inputs.forEach((input) => {
-            input.onmidimessage = midiMessageHandler;
+            input.onmidimessage = function (event) {
+              var deviceKey, onOff, midiNote, velocity;
+
+              if (Object.keys(deviceValues).includes(event.target.name)) {
+                deviceKey = event.target.name;
+              } else {
+                deviceKey = "default";
+              }
+
+              onOff = deviceValues[deviceKey].on === event.data[0];
+              midiNote = event.data[1];
+              velocity = event.data[2];
+
+              midiMessageHandler(event, onOff, midiNote, velocity);
+            };
           });
           return true;
         },
@@ -24,7 +42,11 @@ class MidiController {
     var inputs = midiAccess.inputs;
 
     inputs.forEach((input) => {
-      input.onmidimessage = handleMidiMessage;
+      input.onmidimessage = function (event) {
+        console.log(event);
+      };
+
+      //   input.onmidimessage = handleMidiMessage;
     });
   }
 
