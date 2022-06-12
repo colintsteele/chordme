@@ -15,13 +15,16 @@ import audio from "./Ding-sound-effect.mp3";
 import MidiController from "./MidiController";
 
 class Keyboard extends Component {
+  pressedKeysvar = [];
+
   constructor(props) {
     super(props);
 
     this.state = {
       chord: props.chord,
       nextChord: props.nextChord,
-      activeNotes: props.chord.notes,
+      // activeNotes: props.chord.notes,
+      activeNotes: [],
       minorScaleEnabled: props.minorScaleEnabled,
       majorScaleEnabled: props.majorScaleEnabled,
       scalesEnabled: ["major"],
@@ -31,20 +34,31 @@ class Keyboard extends Component {
       // pressedKeys: [],
       correctChord: false,
     };
-
-    const midiController = new MidiController();
   }
 
-  pressedKeysvar = [];
+  componentDidMount() {
+    new MidiController(this.midiMessageHandler.bind(this));
+  }
+
+  // Handlers
+
+  midiMessageHandler = (event) => {
+    var [pressOn, midiNumber, _something] = [...event.data];
+    // console.log(pressOn);
+    // console.log(midiNumber);
+    // console.log(midiToNote(midiNumber));
+    // console.log(this.state);
+
+    console.log(midiNumber);
+    if (pressOn == 144) {
+      this.addActiveNote(midiNumber - 36);
+    } else {
+      this.removeActiveNote(midiNumber - 36);
+    }
+  };
 
   powerButtonHandler = (_event, onOff) => {
     this.setState({ soundOn: onOff });
-  };
-
-  removeElement = (array, element) => {
-    return array.filter(function (item) {
-      return item !== element;
-    });
   };
 
   scaleSwitchHandler = (event, onOff) => {
@@ -69,10 +83,13 @@ class Keyboard extends Component {
     this.setState({ quizMode: onOff });
   };
 
+  // State changing/checking wrappers
+
   changeChord(chord) {
     this.setState({ correctChord: false });
     this.setKeys(this.state.nextChord);
     this.setActiveNotes([]);
+
     if (this.state.quizMode) {
       this.setState({ activeNotes: [] });
       console.log("quiz!");
@@ -82,13 +99,17 @@ class Keyboard extends Component {
   }
 
   checkMatchingChord() {
-    var pk = this.pressedKeysvar;
+    var pk = this.pressedKeysvar.map((n) => {
+      return n.slice(0, -1);
+    });
     var chordNumbers = this.state.chord.notes;
     var chordNotes = chordNumbers.map((n) => {
-      return midiToNote(n);
+      return midiToNote(n).slice(0, -1);
     });
 
-    if (JSON.stringify(pk) === JSON.stringify(chordNotes)) {
+    console.log(pk);
+    console.log(chordNotes);
+    if (JSON.stringify(pk.sort()) === JSON.stringify(chordNotes.sort())) {
       this.setState({ correctChord: true });
       new Audio(audio).play();
 
@@ -120,13 +141,33 @@ class Keyboard extends Component {
     this.setState({ chord: chord, nextChord: newChord });
   }
 
+  addActiveNote(midiNumber) {
+    this.setState({ activeNotes: [...this.state.activeNotes, midiNumber] });
+  }
+
+  removeActiveNote(midiNumber) {
+    this.setState({
+      activeNotes: this.removeElement(this.state.activeNotes, midiNumber),
+    });
+  }
+
   setActiveNotes(chord) {
     this.setState({ activeNotes: chord.notes });
   }
 
+  // helpers
+  removeElement = (array, element) => {
+    return array.filter(function (item) {
+      return item !== element;
+    });
+  };
+
   piano() {
-    var firstNote = MidiNumbers.fromNote("c0"); //48
-    var lastNote = MidiNumbers.fromNote("b1"); //71
+    // var firstNote = MidiNumbers.fromNote("c0"); //48
+    // var lastNote = MidiNumbers.fromNote("b1"); //71
+    var firstNote = MidiNumbers.fromNote("F0"); //43
+    var lastNote = MidiNumbers.fromNote("E2"); //66
+
     var keyboardShortcuts = KeyboardShortcuts.create({
       firstNote: firstNote,
       lastNote: lastNote,
@@ -138,6 +179,7 @@ class Keyboard extends Component {
         activeNotes={this.state.activeNotes}
         noteRange={{ first: firstNote, last: lastNote }}
         playNote={(midiNumber) => {
+          console.log(midiNumber);
           this.press(midiToNote(midiNumber), true);
 
           if (!this.state.soundOn) {
