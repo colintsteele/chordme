@@ -37,6 +37,7 @@ class Keyboard extends Component {
   }
 
   componentDidMount() {
+    console.log('assigning midi handler')
     new MidiController(this.midiMessageHandler.bind(this));
   }
 
