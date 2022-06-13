@@ -2,6 +2,7 @@ class MidiController {
   constructor(midiMessageHandler) {
     // this object is required because different midi devices define
     // data for 'keypress' events differently
+    // although actually it seems like both my devices are 144 = on
     const deviceValues = {
       default: { on: 1 },
       "OP-1 Midi Device": { on: 144 },
@@ -13,7 +14,6 @@ class MidiController {
         (midiAccess) => {
           var inputs = midiAccess.inputs;
 
-          console.log(inputs)
           inputs.forEach((input) => {
             input.onmidimessage = function (event) {
               var deviceKey, onOff, midiNote, velocity;
@@ -24,8 +24,6 @@ class MidiController {
                 deviceKey = "default";
               }
 
-              console.log(deviceValues[deviceKey].on)
-              console.log(`device on: ${deviceValues[deviceKey].on}, midiData0: ${event.data[0]}`)
               onOff = deviceValues[deviceKey].on === event.data[0];
               midiNote = event.data[1];
               velocity = event.data[2];
@@ -40,7 +38,6 @@ class MidiController {
         }
       );
     }
-    console.log('end of MidiController constructor')
   }
 
   success(midiAccess) {
@@ -50,7 +47,6 @@ class MidiController {
 
     inputs.forEach((input) => {
       input.onmidimessage = function (event) {
-        console.log(event);
       };
 
       //   input.onmidimessage = handleMidiMessage;

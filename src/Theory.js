@@ -46,6 +46,15 @@ export function midiToNote(midiNumber) {
   return `${twoOctaves[num]}${octave}`;
 }
 
+export function randomScale(root, scale, offset) {
+  var notes = scales[scale].map(function (i) {
+    return i + root["index"] + offset;
+  })
+
+  var name = `${root.note} ${scale} scale`
+  return { root: root, notes: notes, name: name, type: 'scale' };
+}
+
 export function randomChord(root, scale, offset) {
   var notes = chords[scale].map(function (i) {
     return i + root["index"] + offset;
@@ -53,5 +62,5 @@ export function randomChord(root, scale, offset) {
 
   var name = `${root.note} ${scale}`;
 
-  return { root: root, notes: notes, name: name };
+  return { root: root, notes: notes, name: name, type: 'chord' };
 }

@@ -3,7 +3,7 @@ import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
 import "react-piano/dist/styles.css";
 import "./Theory";
 import Controls from "./Controls";
-import { midiToNote, randomChord, randomNote, sample } from "./Theory";
+import { midiToNote, randomChord, randomNote, randomScale, sample } from "./Theory";
 import { Component } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -21,8 +21,10 @@ class Keyboard extends Component {
     super(props);
 
     this.state = {
+      objective: props.chord,
       chord: props.chord,
       nextChord: props.nextChord,
+      nextObjective: props.nextChord,
       // activeNotes: props.chord.notes,
       activeNotes: [],
       minorScaleEnabled: props.minorScaleEnabled,
@@ -32,22 +34,17 @@ class Keyboard extends Component {
       quizMode: true,
       quizTime: 2,
       // pressedKeys: [],
-      correctChord: false,
+      objectiveMet: false,
     };
   }
 
   componentDidMount() {
-    console.log('assigning midi handler')
     new MidiController(this.midiMessageHandler.bind(this));
   }
 
   // Handlers
 
   midiMessageHandler = (event, onOff, midiNote, velocity) => {
-    console.log(`onOff: ${onOff}`);
-    console.log(`midiNote: ${midiNote}`);
-    console.log(`velocity: ${velocity}`);
-    console.log("<--->");
 
     var [pressOn, midiNumber, _something] = [...event.data];
 
@@ -88,8 +85,8 @@ class Keyboard extends Component {
   // State changing/checking wrappers
 
   changeChord(chord) {
-    this.setState({ correctChord: false });
-    this.setKeys(this.state.nextChord);
+    this.setState({ objectiveMet: false });
+    this.setKeys(this.state.nextObjective);
     this.setActiveNotes([]);
 
     if (this.state.quizMode) {
@@ -99,22 +96,22 @@ class Keyboard extends Component {
     }
   }
 
-  checkMatchingChord() {
+  checkSuccess() {
     var pk = this.pressedKeysvar.map((n) => {
       return n.slice(0, -1);
     });
-    var chordNumbers = this.state.chord.notes;
-    var chordNotes = chordNumbers.map((n) => {
+    var objectiveNumbers = this.state.objective.notes;
+    var objectiveNotes = objectiveNumbers.map((n) => {
       return midiToNote(n).slice(0, -1);
     });
 
-    if (JSON.stringify(pk.sort()) === JSON.stringify(chordNotes.sort())) {
-      this.setState({ correctChord: true });
+    if (JSON.stringify(pk.sort()) === JSON.stringify(objectiveNotes.sort())) {
+      this.setState({ objectiveMet: true });
       new Audio(audio).play();
 
       setTimeout(() => {
-        this.setState({ correctChord: false });
-        this.changeChord(this.state.nextChord);
+        this.setState({ objectiveMet: false });
+        this.changeChord(this.state.nextObjective);
       }, this.state.quizTime * 1_000);
     }
   }
@@ -122,7 +119,7 @@ class Keyboard extends Component {
   press(note, onOff) {
     if (onOff) {
       this.pressedKeysvar = [...this.pressedKeysvar, note];
-      this.checkMatchingChord();
+      this.checkSuccess();
     } else {
       this.pressedKeysvar = this.removeElement(this.pressedKeysvar, note);
     }
@@ -131,13 +128,14 @@ class Keyboard extends Component {
   setKeys(chord) {
     var note = randomNote();
     var newChord = randomChord(note, sample(this.state.scalesEnabled)[0], 12);
+    var newObjective = randomScale(note, sample(this.state.scalesEnabled)[0], 12);
 
     if (newChord.name === chord) {
       var newNote = randomNote();
       newChord = randomChord(newNote, sample(this.state.scalesEnabled)[0], 12);
     }
 
-    this.setState({ chord: chord, nextChord: newChord });
+    this.setState({ objective: chord, nextObjective: newObjective });
   }
 
   addActiveNote(midiNumber) {
@@ -228,8 +226,9 @@ class Keyboard extends Component {
               p={2}
               size="medium"
               {...this.chipProps()}
-              color={this.state.correctChord ? "success" : "primary"}
-              label={`${this.state.chord.name}`}
+              color={this.state.objectiveMet ? "success" : "primary"}
+              // label={`${this.state.chord.name}`}
+              label={`${this.state.objective.name} ${this.state.objective.type}`}
             />
           </Box>
           <Box p={1}>
@@ -238,7 +237,7 @@ class Keyboard extends Component {
               size="small"
               {...this.chipProps()}
               disabled
-              label={`${this.state.nextChord.name}`}
+              label={`${this.state.nextObjective.name} ${this.state.nextObjective.type}`}
             />
           </Box>
         </Box>
